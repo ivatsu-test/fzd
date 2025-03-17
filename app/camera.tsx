@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { useEffect, useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { Camera, CameraPosition, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import MainView from '../components/main-view';
 import NavLink from '../components/nav-link';
 import route from '../constants/route';
 
 export default function CameraPage() {
-    const device = useCameraDevice('back')
-    const { hasPermission, requestPermission } = useCameraPermission()
+    const [cameraPosition, setCameraPosition] = useState<CameraPosition>('back');
+
+    const device = useCameraDevice(cameraPosition);
+    const { hasPermission, requestPermission } = useCameraPermission();
 
     useEffect(() => {
         if (!hasPermission) {
@@ -33,6 +35,10 @@ export default function CameraPage() {
         )
     }
 
+    function onChangeCameraPosition() {
+        setCameraPosition((prevType) => (prevType === 'back' ? 'front' : 'back'));
+    }
+
     return (
         <View style={styles.container}>
             <NavLink href={route.home}>Home</NavLink>
@@ -41,6 +47,7 @@ export default function CameraPage() {
                 device={device}
                 isActive={true}
             />
+            <Button title="Change camera view" onPress={onChangeCameraPosition} />
         </View>
     )
 }
